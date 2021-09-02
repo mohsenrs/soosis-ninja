@@ -1,15 +1,15 @@
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import 'firebase/auth'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/firestore'
+import 'firebase/compat/auth'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAGo3BlCDpztDdu23ZpKEMDMXYx1PwlHZ4',
-  authDomain: 'soosis-ninja.firebaseapp.com',
-  projectId: 'soosis-ninja',
-  storageBucket: 'soosis-ninja.appspot.com',
-  messagingSenderId: '509528719933',
-  appId: '1:509528719933:web:8322d3eed1218d55492054',
-}
+  apiKey: "AIzaSyAGo3BlCDpztDdu23ZpKEMDMXYx1PwlHZ4",
+  authDomain: "soosis-ninja.firebaseapp.com",
+  projectId: "soosis-ninja",
+  storageBucket: "soosis-ninja.appspot.com",
+  messagingSenderId: "509528719933",
+  appId: "1:509528719933:web:8322d3eed1218d55492054"
+};
 
 firebase.initializeApp(firebaseConfig)
 
