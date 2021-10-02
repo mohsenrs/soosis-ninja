@@ -10,18 +10,24 @@
     <label>upload playlist cover</label>
     <input type="file" @change="handleChange" />
     <div class="error">{{ fileError }}</div>
-    <button>Create</button>
+    <button v-if="!isPending">Create</button>
+    <button v-else disabled>saving...</button>
   </form>
 </template>
 
 <script>
 import { ref } from '@vue/reactivity'
 import useStorage from '@/composables/useStorage'
-import { router, useRouter } from 'vue-router'
+import getUser from '@/composables/getUser'
+import useCollection from '@/composables/useCollection'
+import { timestamp } from '@/firebase/config'
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
     const { url, filePath, uploadImage } = useStorage()
+    const { error, addDoc } = useCollection('playlists')
+    const { user } = getUser()
 
     const form = ref(null)
     const title = ref('')
@@ -29,14 +35,27 @@ export default {
     const file = ref(null)
     const fileError = ref(null)
     const router = useRouter()
+    const isPending = ref(false)
 
     const handleSubmit = async () => {
       if (file.value) {
+        isPending.value = true
         await uploadImage(file.value)
-        console.log('image uploaded', 'url :', url.value);
-        // form.value.reset()
-        alert('playlist successfully created')
-        router.push({ name: 'Home' })
+        await addDoc({
+          title: title.value,
+          description: description.value,
+          userId: user.value.uid,
+          userName: user.value.displayName,
+          coverUrl: url.value,
+          filePath: filePath.value,
+          songs: [],
+          createdAt: timestamp(),
+        })
+        isPending.value = false
+        if (!error.value) {
+          alert('playlist successfully created')
+          router.push({ name: 'Home' })
+        }
       }
     }
 
@@ -56,7 +75,7 @@ export default {
       }
     }
 
-    return { form, title, description, handleSubmit, handleChange, fileError }
+    return { form, title, description, handleSubmit, handleChange, fileError, isPending }
   },
 }
 </script>
