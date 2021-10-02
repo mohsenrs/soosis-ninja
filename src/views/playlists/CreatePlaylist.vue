@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form ref="form" @submit.prevent="handleSubmit">
     <h4>Create new playlist</h4>
     <input type="text" placeholder="playlist title" v-model="title" />
     <input
@@ -16,22 +16,29 @@
 
 <script>
 import { ref } from '@vue/reactivity'
+import useStorage from '@/composables/useStorage'
+import { router, useRouter } from 'vue-router'
 
 export default {
   setup() {
+    const { url, filePath, uploadImage } = useStorage()
 
+    const form = ref(null)
     const title = ref('')
     const description = ref('')
     const file = ref(null)
     const fileError = ref(null)
+    const router = useRouter()
 
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       if (file.value) {
-        console.log('title: ', title.value, 'description: ', description.value, file.value)
+        await uploadImage(file.value)
+        console.log('image uploaded', 'url :', url.value);
+        // form.value.reset()
+        alert('playlist successfully created')
+        router.push({ name: 'Home' })
       }
     }
-
 
     // allowed file types
     const types = ['image/png', 'image/jpeg']
@@ -49,9 +56,7 @@ export default {
       }
     }
 
-
-    return { title, description, handleSubmit, handleChange, fileError }
-
+    return { form, title, description, handleSubmit, handleChange, fileError }
   },
 }
 </script>
